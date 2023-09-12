@@ -4,10 +4,10 @@ import struct
 # TODO
 # [X] - VarInt
 # [X] - VarLong
-# [ ] - Int
-# [ ] - UInt
-# [ ] - Long
-# [ ] - ULong
+# [X] - Int
+# [X] - UInt
+# [X] - Long
+# [X] - ULong
 # [ ] - Float
 # [ ] - Double
 # [ ] - Short
@@ -207,4 +207,28 @@ class UInt():
     
     @staticmethod
     def WriteToStream(_sock : socket, value : int):
-        return _sock.sendall(Int.Write(value))
+        return _sock.sendall(UInt.Write(value))
+
+class Long():
+    def Write(value : int):
+        return struct.pack('>q', value)
+    def Read(_bytes : bytes):
+        return struct.unpack('>q', _bytes)[0]
+    def ReadFromStream(_sock : socket):
+        data = _sock.recv(8)
+        _ret = Long.Read(data)
+        return _ret
+    def WriteToStream(_sock : socket, value : int):
+        _sock.sendall(Long.Write(value))
+
+class ULong():
+    def Write(value : int):
+        return struct.pack('>Q', value)
+    def Read(_bytes : bytes):
+        return struct.unpack('>Q', _bytes)[0]
+    def ReadFromStream(_sock : socket):
+        data = _sock.recv(8)
+        _ret = ULong.Read(data)
+        return _ret
+    def WriteToStream(_sock : socket, value : int):
+        _sock.sendall(ULong.Write(value))
