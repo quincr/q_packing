@@ -136,7 +136,7 @@ class VarLong():
         return bytes(b), data
 
     @staticmethod
-    def ReadFromStream(sock: socket.socket) -> int:
+    def ReadFromStream(sock: socket) -> int:
         data = 0
         for i in range(10):  # Up to 10 bytes can be used for 64-bit signed integers
             ordinal = sock.recv(1)
@@ -149,7 +149,7 @@ class VarLong():
         return data
 
     @staticmethod
-    def WriteToStream(sock: socket.socket, value: int):
+    def WriteToStream(sock: socket, value: int):
         if value > 9223372036854775807 or value < -9223372036854775808:
             raise ValueError("VarLong value must be between -9223372036854775808 and 9223372036854775807!")
 
@@ -175,7 +175,7 @@ class Int():
     @staticmethod
     def Read(_bytes : bytes):
         _a = bytearray(_bytes)
-        _b = struct.unpack(_a[0 : 4])
+        _b = struct.unpack('>i', _a[0 : 4])[0]
         del _a[0 : 4]
         return _a, _b
     
@@ -197,7 +197,7 @@ class UInt():
     @staticmethod
     def Read(_bytes : bytes):
         _a = bytearray(_bytes)
-        _b = struct.unpack(_a[0 : 4])
+        _b = struct.unpack('>I', _a[0 : 4])[0]
         del _a[0 : 4]
         return _a, _b
     
