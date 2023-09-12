@@ -186,3 +186,25 @@ class Int():
     @staticmethod
     def WriteToStream(_sock : socket, value : int):
         return _sock.sendall(Int.Write(value))
+
+class UInt():
+    """Functions that have to do with the reading and writing of unsigned integers."""
+
+    @staticmethod
+    def Write(value : int):
+        return struct.pack('>I', value)
+    
+    @staticmethod
+    def Read(_bytes : bytes):
+        _a = bytearray(_bytes)
+        _b = struct.unpack(_a[0 : 4])
+        del _a[0 : 4]
+        return _a, _b
+    
+    @staticmethod
+    def ReadFromStream(_sock : socket):
+        return struct.unpack('>I', _sock.recv(4))[0]
+    
+    @staticmethod
+    def WriteToStream(_sock : socket, value : int):
+        return _sock.sendall(Int.Write(value))
