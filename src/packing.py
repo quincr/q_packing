@@ -1,4 +1,5 @@
 from socket import socket
+import struct
 
 # TODO
 # [X] - VarInt
@@ -88,7 +89,9 @@ class VarInt():
 
         sock.sendall(VarInt.Write(value))
 
-class VarLong:
+class VarLong():
+    """Functions that have to do with the reading and writing of variable-length longs."""
+
     @staticmethod
     def Write(value: int) -> bytes:
         if value > 9223372036854775807 or value < -9223372036854775808:
@@ -161,3 +164,25 @@ class VarLong:
             sock.send(bytes([byte]))
             if value == 0:
                 break
+
+class Int():
+    """Functions that have to do with the reading and writing of integers."""
+
+    @staticmethod
+    def Write(value : int):
+        return struct.pack('>i', value)
+    
+    @staticmethod
+    def Read(_bytes : bytes):
+        _a = bytearray(_bytes)
+        _b = struct.unpack(_a[0 : 4])
+        del _a[0 : 4]
+        return _a, _b
+    
+    @staticmethod
+    def ReadFromStream(_sock : socket):
+        return struct.unpack('>i', _sock.recv(4))[0]
+    
+    @staticmethod
+    def WriteToStream(_sock : socket, value : int):
+        return _sock.sendall(Int.Write(value))
